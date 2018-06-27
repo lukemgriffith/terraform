@@ -24,7 +24,7 @@ type upgradeFileResult struct {
 	ProviderRequirements map[string]version.Constraints
 }
 
-func upgradeNativeSyntaxFile(filename string, src []byte) (upgradeFileResult, tfdiags.Diagnostics) {
+func (u *Upgrader) upgradeNativeSyntaxFile(filename string, src []byte, an *analysis) (upgradeFileResult, tfdiags.Diagnostics) {
 	var result upgradeFileResult
 	var diags tfdiags.Diagnostics
 
@@ -133,7 +133,7 @@ func upgradeNativeSyntaxFile(filename string, src []byte) (upgradeFileResult, tf
 					// into the default case and migrate it as a normal expression.
 					fallthrough
 				default:
-					valSrc, valDiags := upgradeExpr(arg.Val, filename, false)
+					valSrc, valDiags := upgradeExpr(arg.Val, filename, false, an)
 					diags = diags.Append(valDiags)
 					printAttribute(&buf, arg.Keys[0].Token.Value().(string), valSrc, arg.LineComment)
 				}
@@ -186,7 +186,7 @@ func upgradeNativeSyntaxFile(filename string, src []byte) (upgradeFileResult, tf
 					interp = true
 				}
 
-				valSrc, valDiags := upgradeExpr(arg.Val, filename, interp)
+				valSrc, valDiags := upgradeExpr(arg.Val, filename, interp, an)
 				diags = diags.Append(valDiags)
 				printAttribute(&buf, arg.Keys[0].Token.Value().(string), valSrc, arg.LineComment)
 
@@ -235,7 +235,7 @@ func upgradeNativeSyntaxFile(filename string, src []byte) (upgradeFileResult, tf
 
 				name := arg.Keys[0].Token.Value().(string)
 				expr := arg.Val
-				exprSrc, exprDiags := upgradeExpr(expr, filename, true)
+				exprSrc, exprDiags := upgradeExpr(expr, filename, true, an)
 				diags = diags.Append(exprDiags)
 				printAttribute(&buf, name, exprSrc, arg.LineComment)
 

@@ -145,7 +145,7 @@ command and dealing with them before running this command again.
 		c.Ui.Output(`-----------------------------------------------------------------------------`)
 	}
 
-	newSources, upgradeDiags := configupgrade.Upgrade(sources)
+	newSources, upgradeDiags := configupgrade.Upgrade(sources, c.providerResolver())
 	diags = diags.Append(upgradeDiags)
 	if upgradeDiags.HasErrors() {
 		c.showDiagnostics(diags)

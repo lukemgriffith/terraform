@@ -28,6 +28,7 @@ func TestUpgradeValid(t *testing.T) {
 		t.Run(entry.Name(), func(t *testing.T) {
 			inputDir := filepath.Join(fixtureDir, entry.Name(), "input")
 			wantDir := filepath.Join(fixtureDir, entry.Name(), "want")
+			u := &Upgrader{}
 
 			inputSrc, err := LoadModule(inputDir)
 			if err != nil {
@@ -38,7 +39,7 @@ func TestUpgradeValid(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			gotSrc, diags := Upgrade(inputSrc)
+			gotSrc, diags := u.Upgrade(inputSrc)
 			if diags.HasErrors() {
 				t.Error(diags.Err())
 			}
@@ -83,7 +84,8 @@ func TestUpgradeRenameJSON(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	gotSrc, diags := Upgrade(inputSrc)
+	u := &Upgrader{}
+	gotSrc, diags := u.Upgrade(inputSrc)
 	if diags.HasErrors() {
 		t.Error(diags.Err())
 	}
